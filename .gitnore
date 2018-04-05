@@ -1,0 +1,7 @@
+node_modules
+
+.DS-Store
+
+.env
+*.json
+untitled
