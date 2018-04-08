@@ -19,5 +19,15 @@
     "mongoose": "^5.0.12",
     "morgan": "^1.9.0",
     "request": "^2.69.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yvolunia/MongoScrape2.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/Yvolunia/MongoScrape2/issues"
+  },
+  "homepage": "https://github.com/Yvolunia/MongoScrape2#readme"
 }

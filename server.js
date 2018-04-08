@@ -4,9 +4,8 @@ var logger = require("morgan");
 var mongoose = require("mongoose");
 
 //Scraping Tools
-var cheerio = require("cheerio");
-var request = require("request");
 var axios = require("axios");
+var cheerio = require("cheerio");
 
 // Require all models
 var db = require("./models");
@@ -19,92 +18,100 @@ var app = express();
 // Use morgan logger for loggin requests
 app.use(logger("dev"));
 // Use body-parser for handling form submissions
-app.use(bodParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true}));
 // Use express static as a public directory
 app.use(express.static("public"));
 
 mongoose.Promise = Promise;
-mongoose.connect("mongodb://localhost/wsjPoplater", {
-  useMongoClient: true
-});
+mongoose.connect("mongodb://localhost/wsjPopulater");
+
 
 // Routes
 
-app.get("/scrape", function(req,res) {
+app.get("/scrape", function (req, res) {
 
-// Make request to grab the HTML from the Wall Street Journal
-axios.get("https://www.wsj.com/news/whats-news").then(function(response) {
+  // Make request to grab the HTML from the Wall Street Journal
+  axios.get("https://www.wsj.com/news/whats-news").then(function (response) {
 
-  // Load the HTML into cheerio
-  var $ = cheerio.load(response.data);
+    // Load the HTML into cheerio
+    var $ = cheerio.load(response.data);
 
-  $("h3.headline").each(function(i, element) {
-     
-    // Make an empty array for saving our scraped info
-  var result = [];
+    $("h3.headline").each(function (i, element) {
 
-    result.headline = $(this)
-    .text();
-    result.link = $(this)
-    .children("a")
-    .attr("href");
+      // Make an empty array for saving our scraped info
+      var result = {};
 
-   $("div.summary-container").each(function(i, element) {
-    result.summary = $(this)
-    .text()
+      result.headline = $(this)
+        .text();
+      result.link = $(this)
+        .children("a")
+        .attr("href");
 
-    // Create a new Article using the `result` object built from scraping
-    db.Article.create(result)
-    .then(function(dbArticle) {
-      // View the added result in the console
-      console.log(dbArticle);
-    })
-    .catch(function(err) {
-      // If an error occurred, send it to the client
-      return res.json(err);
-     });
+      $("div.summary-container").each(function (i, element) {
+        result.summary = $(this)
+          .text();
+
+        // Create a new Article using the `result` object built from scraping
+        db.Article.create(result)
+          .then(function (dbArticle) {
+            // View the added result in the console
+            console.log(dbArticle);
+          })
+          .catch(function (err) {
+            // If an error occurred, send it to the client
+            return res.json(err);
+          });
+      });
+
+      // If we were able to successfully scrape and save an Article, send a message to the client
+      res.send("Scrape Complete");
     });
-   
-    // If we were able to successfully scrape and save an Article, send a message to the client
-    res.send("Scrape Complete");
-   });
-  });
-
-app.get("/articles", function(req,res) {
-  db.Article.find({})
-  .then(function(dbArticle) {
-    res.json(dbArticle);
-  })
-  .catch(function(err) {
-    res.json(err);
   });
 });
 
-app.get("/article/:id", function(req, res) {
-  db.Article.findOne({_id: req.params.id})
-    .populate("note")
-    .then(function(dbArticle) {
-      res.json(dbArticle)
+app.get("/articles", function (req, res) {
+  db.Article.find({})
+    .then(function (dbArticle) {
+      res.json(dbArticle);
     })
-    .catch(function(err) {
+    .catch(function (err) {
       res.json(err);
     });
-  });
+});
 
-  app.post("/article/:id", function(req, res) {
-    db.Note.create(req.body)
-    .then(function(dbNote) {
-      return db.Article.findOneAndUpdate({_id: req.params.id}, {note: dbNote.id}, {new: true});
-      })
-      .then(function(dbArticle) {
-        res.json(dbArticle);
-      })
-      .catch(function(err) {
-        res.json(err);
+app.get("/article/:id", function (req, res) {
+  db.Article.findOne({
+      _id: req.params.id
+    })
+    .populate("note")
+    .then(function (dbArticle) {
+      res.json(dbArticle)
+    })
+    .catch(function (err) {
+      res.json(err);
+    });
+});
+
+app.post("/article/:id", function (req, res) {
+  db.Note.create(req.body)
+    .then(function (dbNote) {
+      return db.Article.findOneAndUpdate({
+        _id: req.params.id
+      }, {
+        note: dbNote.id
+      }, {
+        new: true
       });
-  });
+    })
+    .then(function (dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function (err) {
+      res.json(err);
+    });
+});
 
-  // Start the server
-app.listen(PORT, function() {
+// Start the server
+app.listen(PORT, function () {
   console.log("App running on port " + PORT + "!");
 });
