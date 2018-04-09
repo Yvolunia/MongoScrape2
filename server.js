@@ -28,7 +28,7 @@ mongoose.connect("mongodb://localhost/wsjPopulater");
 
 // Routes
 
-app.get("/scrape", function (req, res) {
+app.get("/index", function (req, res) {
 
   // Make request to grab the HTML from the Wall Street Journal
   axios.get("https://www.wsj.com/news/whats-news").then(function (response) {
