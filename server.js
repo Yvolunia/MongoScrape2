@@ -36,20 +36,22 @@ app.get("/index", function (req, res) {
     // Load the HTML into cheerio
     var $ = cheerio.load(response.data);
 
-    $("h3.headline").each(function (i, element) {
+    $("div.headline-container").each(function (i, element) {
 
       // Make an empty array for saving our scraped info
       var result = {};
 
       result.headline = $(this)
+        .children("h3")
         .text();
-      result.link = $(this)
-        .children("a")
+       
+        result.link = $(this)
+        .children("h3").children("a")
         .attr("href");
 
-      $("div.summary-container").each(function (i, element) {
         result.summary = $(this)
-          .text();
+        .children("div.summary-container").children("p")
+        .text();
 
         // Create a new Article using the `result` object built from scraping
         db.Article.create(result)
@@ -67,7 +69,6 @@ app.get("/index", function (req, res) {
       res.send("Scrape Complete");
     });
   });
-});
 
 app.get("/articles", function (req, res) {
   db.Article.find({})
