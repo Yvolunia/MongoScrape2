@@ -5,28 +5,6 @@ $.getJSON("/articles", function(data) {
     // Display the apropos information on the page
 
     $("#headline").append("<p data-id='" + data[i]._id + "'>" + data[i].headline + "<br />" + data[i].summary + "<br />" + data[i].link + "<br />" + "</p>");
-
-    // function createCard(post) {
-    //   var newPostPanel = $("<div>");
-    //   newPostPanel.addClass ("card", style="width: 18rem;");
-    //   newPostPanel.append(newPostPanel);
-    //   var newCardBody = $("<div>");
-    //   newCardBody.addClass ("card-body");
-    //   newCardBody.append(newCardBody);
-    //   var newHeadline = $("<h5>");
-    //   newHeadline.addClass ("card-title")
-    //   newHeadline.text(post.headline);
-    //   newHeadline.append(post.headline);
-    //   var newCardText = $("<p>");
-    //   newCardText.addClass ("card-text");
-    //   newCardText.text (post.summary + post.link);
-    //   newCardText.append (post.summary + post.link);
-    //   var saveButton = $("<button>");
-    //   saveButton.addClass ("btn btn-primary");
-    //   saveButton.text("Save Article");
-    //   saveButton.append(saveButton);
-    // };
-  
   }
 });
 

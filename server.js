@@ -70,6 +70,7 @@ app.get("/index", function (req, res) {
     });
   });
 
+// Route for getting all Articles 
 app.get("/articles", function (req, res) {
   db.Article.find({})
     .then(function (dbArticle) {
@@ -80,6 +81,7 @@ app.get("/articles", function (req, res) {
     });
 });
 
+// Route for grabbing a specific Article by id
 app.get("/article/:id", function (req, res) {
   db.Article.findOne({
       _id: req.params.id
@@ -93,6 +95,7 @@ app.get("/article/:id", function (req, res) {
     });
 });
 
+// Route for saving/updating an Article's associated Note
 app.post("/article/:id", function (req, res) {
   db.Note.create(req.body)
     .then(function (dbNote) {
